@@ -54,7 +54,7 @@ def collect_output(ser, label, lines_list):
                 elif buf.startswith(b"\r"):
                     buf = buf[1:]
                 if line:
-                    lines_list.append((label, line))
+                    lines_list.append((label, line, time.monotonic()))
                     if not args_quiet:
                         print(f"[{label}] {line}")
     except (serial.SerialException, OSError):
@@ -114,49 +114,64 @@ def main():
         received.clear()
 
         def ping_pong(sender_idx, receiver_idx, msg):
-            """Send msg from sender, expect RX on receiver + pong back to sender."""
+            """Send msg from sender, expect RX on receiver + pong back to sender.
+            Returns (ok, t_rx_ms, t_pong_ms) — latencies from send moment."""
             s_label = labels[sender_idx]
             r_label = labels[receiver_idx]
             if not args.quiet:
                 print(f"[{s_label}] -> [{r_label}]: '{msg}'")
+
+            t_send = time.monotonic()
             send_line(ser_list[sender_idx][0], msg)
 
-            deadline = time.monotonic() + args.timeout
-            seen_rx = False
-            seen_pong = False
+            deadline = t_send + args.timeout
+            t_rx = None
+            t_pong = None
             while time.monotonic() < deadline:
                 time.sleep(0.1)
-                for label, line in list(received):
-                    if label == r_label and f"RX: {msg}" in line:
-                        seen_rx = True
-                    if label == s_label and "RX: pong" in line:
-                        seen_pong = True
-                if seen_rx and seen_pong:
+                for label, line, ts in list(received):
+                    if label == r_label and f"RX: {msg}" in line and t_rx is None:
+                        t_rx = ts
+                    if label == s_label and "RX: pong" in line and t_pong is None:
+                        t_pong = ts
+                if t_rx is not None and t_pong is not None:
                     break
 
-            if not seen_rx:
+            if t_rx is None:
                 print(f"FAIL: [{r_label}] did not receive '{msg}'", file=sys.stderr)
-                return False
-            if not seen_pong:
+                return False, None, None
+            if t_pong is None:
                 print(f"FAIL: [{s_label}] did not receive 'pong'", file=sys.stderr)
-                return False
+                return False, None, None
+
+            rx_ms = (t_rx - t_send) * 1000.0
+            pong_ms = (t_pong - t_send) * 1000.0
             if not args.quiet:
                 print(f"  OK: [{r_label}] received '{msg}', [{s_label}] received 'pong'")
-            return True
+                print(f"  Latency: TX->RX {rx_ms:.0f} ms, round-trip {pong_ms:.0f} ms")
+            return True, rx_ms, pong_ms
 
         # Direction 1: Device 0 → Device 1
-        if not ping_pong(0, 1, "ping"):
+        ok1, rx1, rt1 = ping_pong(0, 1, "ping")
+        if not ok1:
             return 1
 
         time.sleep(1.0)
         received.clear()
 
         # Direction 2: Device 1 → Device 0
-        if not ping_pong(1, 0, "ping"):
+        ok2, rx2, rt2 = ping_pong(1, 0, "ping")
+        if not ok2:
             return 1
 
         if not args.quiet:
-            print("PASS: radio link OK (both directions)")
+            print(f"\n--- Latency summary ---")
+            print(f"  {labels[0]} -> {labels[1]}:  TX->RX {rx1:.0f} ms,  round-trip {rt1:.0f} ms")
+            print(f"  {labels[1]} -> {labels[0]}:  TX->RX {rx2:.0f} ms,  round-trip {rt2:.0f} ms")
+            avg_rx = (rx1 + rx2) / 2
+            avg_rt = (rt1 + rt2) / 2
+            print(f"  Average:           TX->RX {avg_rx:.0f} ms,  round-trip {avg_rt:.0f} ms")
+            print(f"\nPASS: radio link OK (both directions)")
         else:
             print("PASS")
         return 0
