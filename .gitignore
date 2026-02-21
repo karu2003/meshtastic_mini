@@ -9,4 +9,5 @@ build-arm/
 .DS_Store
 .zencoder
 .zenflow
+*.pdf
 
