@@ -1,0 +1,12 @@
+build/
+build-arm/
+*.elf
+*.bin
+*.hex
+*.map
+*.o
+*.a
+.DS_Store
+.zencoder
+.zenflow
+

@@ -1,0 +1,12 @@
+[submodule "third_party/STM32CubeWL"]
+	path = third_party/STM32CubeWL
+	url = https://github.com/STMicroelectronics/STM32CubeWL.git
+	branch = main
+[submodule "third_party/nanopb"]
+	path = third_party/nanopb
+	url = https://github.com/nanopb/nanopb.git
+	branch = master
+[submodule "third_party/meshtastic_protobufs"]
+	path = third_party/meshtastic_protobufs
+	url = https://github.com/meshtastic/protobufs.git
+	branch = master
