@@ -107,6 +107,10 @@ On receive: if hop_limit > 0 and packet not seen (by Packet ID + From), decremen
 
 STM32WLE5 hardware AES. Channel PSK 16 bytes → AES-128. Header is not encrypted; only payload.
 
+## Connecting to other Meshtastic nodes
+
+To communicate with phones (Meshtastic app), ESP32 nodes, or any Meshtastic device: use the **same region**, **Long Fast** (or same preset), and the **same channel key**. See **[docs/CONNECTING_TO_MESHTASTIC.md](docs/CONNECTING_TO_MESHTASTIC.md)** for requirements, default LongFast PSK, step-by-step setup, and limitations.
+
 ## Project structure
 
 ```
