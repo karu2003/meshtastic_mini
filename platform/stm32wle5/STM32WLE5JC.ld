@@ -1,5 +1,5 @@
 /* Linker script for STM32WLE5JC (Wio-E5-LE Mini): 256KB Flash, 64KB RAM.
- * Matches working radio_pair layout: single RAM region, .isr_vector at 0x08000000. */
+ * Single RAM region, .isr_vector at 0x08000000. */
 
 ENTRY(Reset_Handler)
 

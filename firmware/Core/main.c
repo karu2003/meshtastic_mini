@@ -20,9 +20,8 @@ __attribute__((weak)) void uart_tx(const uint8_t *data, uint16_t len) {
 }
 
 #if defined(USE_HAL_DRIVER)
+#include "serial_io.h"
 extern void SystemClock_Config_LL(void);
-extern void debug_uart_init(void);
-extern void debug_uart_puts(const char *s);
 #endif
 
 int main(void) {
@@ -30,15 +29,14 @@ int main(void) {
     /* 48 MHz via LL before HAL so SysTick = 1 ms (no HAL timeouts during clock switch) */
     SystemClock_Config_LL();
     HAL_Init();
-    debug_uart_init();   /* USART1 115200, sends "Meshtastic_mini started" to serial debug */
+    serial_init();   /* main serial USART1 115200 */
 #endif
     /* Register STM32WL driver (when built with USE_STM32WL_RADIO). */
     radio_stm32wl_register();
 
+    serial_puts("Meshtastic_mini started\r\n");
     mesh_mini_init();
-#if defined(USE_HAL_DRIVER)
-    debug_uart_puts("mesh init done, loop\r\n");
-#endif
+    serial_puts("mesh init done, loop\r\n");
 
     for (;;)
         mesh_mini_loop();

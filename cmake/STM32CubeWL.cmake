@@ -25,6 +25,8 @@ set(CUBE_HAL_SRCS
   ${CUBE_HAL_DRIVER}/Src/stm32wlxx_hal_pwr_ex.c
   ${CUBE_HAL_DRIVER}/Src/stm32wlxx_hal_uart.c
   ${CUBE_HAL_DRIVER}/Src/stm32wlxx_hal_uart_ex.c
+  ${CUBE_HAL_DRIVER}/Src/stm32wlxx_hal_cryp.c
+  ${CUBE_HAL_DRIVER}/Src/stm32wlxx_hal_cryp_ex.c
 )
 
 # Startup and linker from CMSIS Device (cmsis_device_wl submodule). Wio-E5 = STM32WLE5xx.

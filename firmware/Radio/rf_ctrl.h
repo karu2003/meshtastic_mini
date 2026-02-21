@@ -11,6 +11,7 @@ extern "C" {
 #endif
 
 void rf_ctrl_init(void);
+void rf_ctrl_set_off(void);   /* PA4=0 PA5=0 (as radio_pair standby) */
 void rf_ctrl_set_rx(void);
 void rf_ctrl_set_tx(void);
 

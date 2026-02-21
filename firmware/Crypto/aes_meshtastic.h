@@ -1,6 +1,7 @@
 /**
- * AES-128 for channel payload (STM32WLE5 hardware AES).
- * Packet header is not encrypted; only payload after 16-byte header is encrypted.
+ * AES-128-CTR for Meshtastic channel payload (STM32WLE5 hardware AES).
+ * Nonce = packetId(8 LE) + fromNode(4 LE) + blockCounter(4).
+ * Header is NOT encrypted; only payload after 16-byte header.
  */
 
 #ifndef AES_MESHTASTIC_H
@@ -15,21 +16,14 @@ extern "C" {
 
 #define MESH_AES_KEY_LEN 16
 
-/**
- * Set channel key (PSK, 16 bytes for AES-128).
- */
 void aes_set_channel_key(const uint8_t *key);
 
 /**
- * Decrypt payload in place. len must be multiple of 16 (AES block).
- * IV/mode per Meshtastic spec (see firmware or docs).
+ * AES-128-CTR encrypt/decrypt in place (same operation for CTR mode).
+ * Meshtastic nonce: packetId(8 LE) + fromNode(4 LE) + counter(4).
  */
-bool aes_decrypt_payload(uint8_t *payload, uint16_t len);
-
-/**
- * Encrypt payload in place.
- */
-bool aes_encrypt_payload(uint8_t *payload, uint16_t len);
+void aes_ctr_crypt(uint8_t *payload, uint16_t len,
+                   uint32_t packet_id, uint32_t from_node);
 
 #ifdef __cplusplus
 }

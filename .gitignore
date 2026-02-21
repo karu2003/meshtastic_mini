@@ -1,5 +1,4 @@
 build/
-build-arm/
 *.elf
 *.bin
 *.hex
