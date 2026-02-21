@@ -1,4 +1,14 @@
+
 # Meshtastic-mini — Wio-E5-LE Mini (STM32WLE5JC)
+
+## Removing Readout Protection (RDP, nBOOT0)
+
+To allow flashing and debug access:
+
+- Set RDP level to AA (allows debug and flash read/write)
+- Set nBOOT0 = 0 (BOOT0 = 0)
+
+You can set these options using STM32CubeProgrammer or a similar tool.
 
 **Meshtastic-compatible** protocol implementation for Seeed Studio Wio-E5-LE Mini: LoRa mesh only, config via Serial, no BLE/GPS/display.
 
