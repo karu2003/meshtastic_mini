@@ -34,8 +34,8 @@ int main(void) {
     /* Register STM32WL driver (when built with USE_STM32WL_RADIO). */
     radio_stm32wl_register();
 
-    serial_puts("Meshtastic_mini started\r\n");
     mesh_mini_init();
+    serial_puts("Meshtastic_mini started\r\n");
     serial_puts("mesh init done, loop\r\n");
 
     for (;;)

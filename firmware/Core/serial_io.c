@@ -73,9 +73,6 @@ void serial_init(void)
     __HAL_UART_ENABLE_IT(&huart1, UART_IT_RXNE);
     NVIC_SetPriority(USART1_IRQn, 2);
     NVIC_EnableIRQ(USART1_IRQn);
-
-    static const char msg[] = "\r\nMeshtastic_mini started\r\n";
-    (void)HAL_UART_Transmit(&huart1, (const uint8_t *)msg, (uint16_t)(sizeof(msg) - 1), 100);
 }
 
 void serial_puts(const char *s)
